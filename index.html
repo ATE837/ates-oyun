@@ -8,132 +8,232 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            background: #0a0a0a;
-            color: #0f0;
+            background: #1a1a2e;
+            color: #fff;
             font-family: 'Courier New', monospace;
             overflow: hidden;
+            touch-action: none;
         }
         
         #menu {
-            text-align: center;
-            padding-top: 100px;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 5em;
+            margin-bottom: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
         
         h1 {
-            font-size: 4em;
-            text-shadow: 0 0 20px #0f0;
-            margin-bottom: 20px;
+            font-size: 3em;
+            color: #e94560;
+            text-shadow: 3px 3px 6px #000;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #aaa;
+            font-size: 1.2em;
+            margin-bottom: 40px;
         }
         
         .btn {
-            display: inline-block;
-            padding: 20px 50px;
-            margin: 15px;
-            background: transparent;
-            color: #0f0;
-            border: 3px solid #0f0;
+            padding: 20px 60px;
+            margin: 10px;
+            background: #e94560;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
             font-size: 1.5em;
             cursor: pointer;
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
             transition: all 0.3s;
         }
         
         .btn:hover {
-            background: #0f0;
-            color: #000;
-            box-shadow: 0 0 30px #0f0;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(233, 69, 96, 0.6);
         }
         
         #game {
             display: none;
-            position: relative;
         }
         
         #gameCanvas {
             display: block;
-            background: #1a1a2e;
+            background: #2d4a3e;
         }
         
         #ui {
             position: fixed;
             top: 10px;
             left: 10px;
-            color: #fff;
-            font-size: 18px;
-            text-shadow: 2px 2px 4px #000;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e94560;
         }
         
-        .health-bar {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 300px;
-            height: 30px;
-            background: #333;
-            border: 2px solid #0f0;
-        }
-        
-        .health-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #0f0, #0a0);
-            width: 100%;
-            transition: width 0.3s;
-        }
-        
-        #buildMenu {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
+        .resource {
             display: flex;
-            gap: 10px;
+            align-items: center;
+            margin: 5px 0;
+            font-size: 1.2em;
         }
         
-        .build-btn {
-            width: 60px;
-            height: 60px;
-            background: #222;
-            border: 2px solid #0f0;
-            color: #0f0;
-            font-size: 1.5em;
-            cursor: pointer;
-        }
-        
-        .build-btn.selected {
-            background: #0f0;
-            color: #000;
+        .resource span {
+            margin-left: 10px;
+            color: #ffd700;
         }
         
         #dayNight {
             position: fixed;
             top: 10px;
             right: 10px;
-            font-size: 24px;
-            font-weight: bold;
+            background: rgba(0,0,0,0.7);
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.5em;
+            border: 2px solid #ffd700;
+        }
+        
+        .health-bar {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 25px;
+            background: #333;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 3px solid #fff;
+        }
+        
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            width: 100%;
+            transition: width 0.3s;
+        }
+        
+        #buildMenu {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 15px;
+        }
+        
+        .build-btn {
+            width: 70px;
+            height: 70px;
+            background: #333;
+            border: 3px solid #666;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 2em;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .build-btn:hover {
+            border-color: #e94560;
+            transform: scale(1.1);
+        }
+        
+        .build-btn.selected {
+            background: #e94560;
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(233, 69, 96, 0.6);
+        }
+        
+        .build-btn .cost {
+            position: absolute;
+            bottom: 2px;
+            font-size: 0.4em;
+            color: #ffd700;
+        }
+        
+        #joystick {
+            position: fixed;
+            bottom: 100px;
+            left: 50px;
+            width: 120px;
+            height: 120px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.5);
+            display: none;
+            touch-action: none;
+        }
+        
+        #joystick-knob {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 50px;
+            background: #e94560;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+        
+        @media (max-width: 768px) {
+            #joystick { display: block; }
+            h1 { font-size: 2em; }
+            .btn { padding: 15px 40px; font-size: 1.2em; }
         }
     </style>
 </head>
 <body>
     <div id="menu">
-        <h1>🔥 ATEŞ 🔥</h1>
-        <p style="font-size: 1.2em; margin-bottom: 30px;">Gündüz İnşa Et | Gece Savun</p>
-        <button class="btn" onclick="startGame()">🎮 OYNA</button>
-        <br>
-        <p style="margin-top: 20px; opacity: 0.7;">WASD: Hareket | Mouse: İnşa | Boşluk: Saldır</p>
+        <div class="logo">🔥</div>
+        <h1>ATEŞ</h1>
+        <p class="subtitle">Hayatta Kal | İnşa Et | Savun</p>
+        <button class="btn" onclick="startGame()">▶ OYNA</button>
+        <p style="margin-top: 30px; color: #666; font-size: 0.9em;">
+            WASD / Joystick: Hareket | Tıkla: İnşa
+        </p>
     </div>
     
     <div id="game">
         <canvas id="gameCanvas"></canvas>
         <div id="ui">
-            <div>🪵 <span id="wood">50</span></div>
-            <div>🪨 <span id="stone">20</span></div>
-            <div>🔩 <span id="metal">10</span></div>
+            <div class="resource">🪵<span id="wood">50</span></div>
+            <div class="resource">🪨<span id="stone">20</span></div>
+            <div class="resource">⚙️<span id="metal">10</span></div>
         </div>
         <div id="dayNight">☀️ 02:00</div>
         <div class="health-bar"><div class="health-fill" id="health"></div></div>
         <div id="buildMenu">
-            <button class="build-btn selected" onclick="selectBuild('wall')">🧱</button>
-            <button class="build-btn" onclick="selectBuild('tower')">🏹</button>
-            <button class="build-btn" onclick="selectBuild('trap')">🕸️</button>
+            <button class="build-btn selected" onclick="selectBuild('wall', this)" title="Duvar - 10🪵">🧱<span class="cost">10</span></button>
+            <button class="build-btn" onclick="selectBuild('tower', this)" title="Kule - 30🪵 10🪨">🏰<span class="cost">30</span></button>
+            <button class="build-btn" onclick="selectBuild('trap', this)" title="Tuzak - 5🪵 5⚙️">⚡<span class="cost">5</span></button>
+        </div>
+        <div id="joystick">
+            <div id="joystick-knob"></div>
         </div>
     </div>
 
@@ -144,21 +244,35 @@
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
         
+        const TILE = 40;
+        
         let game = {
-            player: { x: canvas.width/2, y: canvas.height/2, health: 100, speed: 4 },
+            camera: { x: 0, y: 0 },
+            player: { 
+                x: 0, y: 0, 
+                health: 100, maxHealth: 100,
+                speed: 3,
+                vx: 0, vy: 0
+            },
             resources: { wood: 50, stone: 20, metal: 10 },
             buildings: [],
             zombies: [],
+            particles: [],
             day: true,
             time: 120,
             selectedBuild: 'wall',
             keys: {},
-            mouse: { x: 0, y: 0 }
+            mouse: { x: 0, y: 0, worldX: 0, worldY: 0 }
         };
+        
+        // Dünya boyutu
+        const WORLD = { w: 2000, h: 2000 };
         
         function startGame() {
             document.getElementById('menu').style.display = 'none';
             document.getElementById('game').style.display = 'block';
+            game.player.x = WORLD.w/2;
+            game.player.y = WORLD.h/2;
             init();
         }
         
@@ -166,22 +280,23 @@
             // Kontroller
             document.addEventListener('keydown', e => game.keys[e.key.toLowerCase()] = true);
             document.addEventListener('keyup', e => game.keys[e.key.toLowerCase()] = false);
-            document.addEventListener('mousemove', e => {
-                game.mouse.x = e.clientX;
-                game.mouse.y = e.clientY;
-            });
+            document.addEventListener('mousemove', updateMouse);
             document.addEventListener('click', build);
             
-            // Zaman döngüsü
+            // Joystick (mobil)
+            setupJoystick();
+            
+            // Zaman
             setInterval(() => {
                 game.time--;
                 if(game.time <= 0) {
                     game.day = !game.day;
-                    game.time = 120;
+                    game.time = game.day ? 120 : 60;
                     if(game.day) {
                         game.resources.wood += 30;
                         game.resources.stone += 15;
                         game.resources.metal += 5;
+                        addParticle(game.player.x, game.player.y, '💰', 10);
                     }
                 }
                 updateUI();
@@ -189,84 +304,199 @@
             
             // Zombi spawn
             setInterval(() => {
-                if(!game.day && game.zombies.length < 20) {
-                    spawnZombie();
-                }
-            }, 2000);
+                if(!game.day && game.zombies.length < 15) spawnZombie();
+            }, 3000);
             
             gameLoop();
         }
         
+        function setupJoystick() {
+            const joy = document.getElementById('joystick');
+            const knob = document.getElementById('joystick-knob');
+            let active = false;
+            
+            joy.addEventListener('touchstart', e => {
+                active = true;
+                updateJoystick(e.touches[0]);
+            });
+            
+            joy.addEventListener('touchmove', e => {
+                if(active) updateJoystick(e.touches[0]);
+            });
+            
+            joy.addEventListener('touchend', () => {
+                active = false;
+                knob.style.transform = 'translate(-50%, -50%)';
+                game.player.vx = 0;
+                game.player.vy = 0;
+            });
+            
+            function updateJoystick(touch) {
+                const rect = joy.getBoundingClientRect();
+                const cx = rect.left + rect.width/2;
+                const cy = rect.top + rect.height/2;
+                const dx = touch.clientX - cx;
+                const dy = touch.clientY - cy;
+                const dist = Math.min(Math.sqrt(dx*dx + dy*dy), 35);
+                const angle = Math.atan2(dy, dx);
+                
+                knob.style.transform = `translate(calc(-50% + ${Math.cos(angle)*dist}px), calc(-50% + ${Math.sin(angle)*dist}px))`;
+                
+                game.player.vx = Math.cos(angle) * (dist/35) * game.player.speed;
+                game.player.vy = Math.sin(angle) * (dist/35) * game.player.speed;
+            }
+        }
+        
+        function updateMouse(e) {
+            game.mouse.x = e.clientX;
+            game.mouse.y = e.clientY;
+            game.mouse.worldX = e.clientX + game.camera.x;
+            game.mouse.worldY = e.clientY + game.camera.y;
+        }
+        
         function spawnZombie() {
             const angle = Math.random() * Math.PI * 2;
-            const dist = 600;
+            const dist = 500;
             game.zombies.push({
                 x: game.player.x + Math.cos(angle) * dist,
                 y: game.player.y + Math.sin(angle) * dist,
-                health: 30,
-                speed: 1 + Math.random()
+                health: 40,
+                maxHealth: 40,
+                speed: 0.8 + Math.random() * 0.5,
+                attackCooldown: 0
             });
         }
         
         function build() {
             if(!game.day) return;
             
-            const costs = { wall: {w:10,s:0,m:0}, tower: {w:30,s:10,m:0}, trap: {w:5,s:0,m:5} };
+            const costs = { 
+                wall: {wood:10, stone:0, metal:0}, 
+                tower: {wood:30, stone:10, metal:0}, 
+                trap: {wood:5, stone:0, metal:5} 
+            };
             const c = costs[game.selectedBuild];
             
-            if(game.resources.wood >= c.w && game.resources.stone >= c.s && game.resources.metal >= c.m) {
-                game.resources.wood -= c.w;
-                game.resources.stone -= c.s;
-                game.resources.metal -= c.m;
+            if(game.resources.wood >= c.wood && game.resources.stone >= c.stone && game.resources.metal >= c.metal) {
+                game.resources.wood -= c.wood;
+                game.resources.stone -= c.stone;
+                game.resources.metal -= c.metal;
+                
                 game.buildings.push({
                     type: game.selectedBuild,
-                    x: game.mouse.x,
-                    y: game.mouse.y,
-                    health: 100
+                    x: Math.floor(game.mouse.worldX / TILE) * TILE + TILE/2,
+                    y: Math.floor(game.mouse.worldY / TILE) * TILE + TILE/2,
+                    health: game.selectedBuild === 'wall' ? 200 : game.selectedBuild === 'tower' ? 150 : 50
                 });
+                
+                addParticle(game.mouse.worldX, game.mouse.worldY, '✨', 5);
             }
         }
         
-        function selectBuild(type) {
+        function selectBuild(type, btn) {
             game.selectedBuild = type;
             document.querySelectorAll('.build-btn').forEach(b => b.classList.remove('selected'));
-            event.target.classList.add('selected');
+            btn.classList.add('selected');
+        }
+        
+        function addParticle(x, y, emoji, life) {
+            game.particles.push({x, y, emoji, life, maxLife: life, vy: -2});
         }
         
         function updateUI() {
             document.getElementById('wood').textContent = game.resources.wood;
             document.getElementById('stone').textContent = game.resources.stone;
             document.getElementById('metal').textContent = game.resources.metal;
-            document.getElementById('health').style.width = game.player.health + '%';
+            document.getElementById('health').style.width = (game.player.health/game.player.maxHealth*100) + '%';
             
             const m = Math.floor(game.time/60);
             const s = game.time%60;
-            document.getElementById('dayNight').textContent = 
-                (game.day ? '☀️' : '🌙') + ` ${m}:${s.toString().padStart(2,'0')}`;
+            const dn = document.getElementById('dayNight');
+            dn.textContent = (game.day ? '☀️' : '🌙') + ` ${m}:${s.toString().padStart(2,'0')}`;
+            dn.style.borderColor = game.day ? '#ffd700' : '#4a4a6a';
+        }
+        
+        function drawRect(x, y, w, h, color) {
+            ctx.fillStyle = color;
+            ctx.fillRect(x - game.camera.x, y - game.camera.y, w, h);
+        }
+        
+        function drawCircle(x, y, r, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(x - game.camera.x, y - game.camera.y, r, 0, Math.PI*2);
+            ctx.fill();
         }
         
         function gameLoop() {
+            // Güncelle
+            if(game.keys['w'] || game.keys['arrowup']) game.player.vy = -game.player.speed;
+            else if(game.keys['s'] || game.keys['arrowdown']) game.player.vy = game.player.speed;
+            else if(!game.player.vx) game.player.vy = 0;
+            
+            if(game.keys['a'] || game.keys['arrowleft']) game.player.vx = -game.player.speed;
+            else if(game.keys['d'] || game.keys['arrowright']) game.player.vx = game.player.speed;
+            else if(!game.player.vy) game.player.vx = 0;
+            
+            game.player.x += game.player.vx;
+            game.player.y += game.player.vy;
+            
+            // Sınırlar
+            game.player.x = Math.max(TILE, Math.min(WORLD.w - TILE, game.player.x));
+            game.player.y = Math.max(TILE, Math.min(WORLD.h - TILE, game.player.y));
+            
+            // Kamera
+            game.camera.x = game.player.x - canvas.width/2;
+            game.camera.y = game.player.y - canvas.height/2;
+            
             // Arka plan
-            ctx.fillStyle = game.day ? '#87CEEB' : '#1a1a2e';
+            ctx.fillStyle = game.day ? '#3d5a45' : '#1a1a2e';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             // Grid
-            ctx.strokeStyle = game.day ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.05)';
-            for(let x=0; x<canvas.width; x+=50) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
-            for(let y=0; y<canvas.height; y+=50) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
-            
-            // Oyuncu hareketi
-            if(game.keys['w']) game.player.y -= game.player.speed;
-            if(game.keys['s']) game.player.y += game.player.speed;
-            if(game.keys['a']) game.player.x -= game.player.speed;
-            if(game.keys['d']) game.player.x += game.player.speed;
+            ctx.strokeStyle = game.day ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)';
+            ctx.lineWidth = 1;
+            const offX = -game.camera.x % TILE;
+            const offY = -game.camera.y % TILE;
+            for(let x = offX; x < canvas.width; x += TILE) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for(let y = offY; y < canvas.height; y += TILE) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
             
             // Binalar
             game.buildings.forEach(b => {
-                ctx.font = '30px Arial';
-                ctx.textAlign = 'center';
-                let emoji = b.type === 'wall' ? '🧱' : b.type === 'tower' ? '🏹' : '🕸️';
-                ctx.fillText(emoji, b.x, b.y);
+                const sx = b.x - game.camera.x;
+                const sy = b.y - game.camera.y;
+                
+                if(b.type === 'wall') {
+                    drawRect(b.x - 18, b.y - 18, 36, 36, '#8b4513');
+                    drawRect(b.x - 15, b.y - 15, 30, 30, '#a0522d');
+                    ctx.fillStyle = '#654321';
+                    ctx.fillRect(sx - 15, sy - 5, 30, 4);
+                    ctx.fillRect(sx - 15, sy + 5, 30, 4);
+                } else if(b.type === 'tower') {
+                    drawRect(b.x - 20, b.y - 20, 40, 40, '#4a4a4a');
+                    drawRect(b.x - 15, b.y - 15, 30, 30, '#666');
+                    drawCircle(b.x, b.y - 25, 12, '#e94560');
+                } else if(b.type === 'trap') {
+                    drawRect(b.x - 15, b.y - 15, 30, 30, '#333');
+                    ctx.strokeStyle = '#e94560';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(sx - 10, sy - 10); ctx.lineTo(sx + 10, sy + 10);
+                    ctx.moveTo(sx + 10, sy - 10); ctx.lineTo(sx - 10, sy + 10);
+                    ctx.stroke();
+                }
+                
+                // Can barı
+                if(b.health < (b.type === 'wall' ? 200 : b.type === 'tower' ? 150 : 50)) {
+                    ctx.fillStyle = '#333';
+                    ctx.fillRect(sx - 15, sy - 30, 30, 4);
+                    ctx.fillStyle = '#0f0';
+                    ctx.fillRect(sx - 15, sy - 30, 30 * (b.health/(b.type === 'wall' ? 200 : b.type === 'tower' ? 150 : 50)), 4);
+                }
             });
             
             // Zombiler
@@ -275,34 +505,95 @@
                 const dy = game.player.y - z.y;
                 const dist = Math.sqrt(dx*dx + dy*dy);
                 
-                if(dist > 0) {
+                // Hareket
+                if(dist > 25) {
                     z.x += (dx/dist) * z.speed;
                     z.y += (dy/dist) * z.speed;
                 }
                 
-                if(dist < 30) {
-                    game.player.health -= 0.5;
+                // Hasar
+                if(dist < 30 && z.attackCooldown <= 0) {
+                    game.player.health -= 10;
+                    z.attackCooldown = 60;
+                    addParticle(game.player.x, game.player.y, '💥', 10);
                     if(game.player.health <= 0) {
-                        alert('Öldün! Yeniden başlıyor...');
+                        alert('Öldün! Skor: ' + Math.floor(game.player.x + game.player.y));
                         location.reload();
                     }
                 }
+                if(z.attackCooldown > 0) z.attackCooldown--;
                 
-                ctx.font = '25px Arial';
-                ctx.fillText('🧟', z.x, z.y);
+                // Çizim
+                const sx = z.x - game.camera.x;
+                const sy = z.y - game.camera.y;
+                
+                // Gölge
+                drawEllipse(z.x, z.y + 15, 15, 5, 'rgba(0,0,0,0.3)');
+                // Vücut
+                drawCircle(z.x, z.y, 15, '#2d5016');
+                // Gözler
+                ctx.fillStyle = '#ff0000';
+                ctx.fillRect(sx - 8, sy - 5, 5, 5);
+                ctx.fillRect(sx + 3, sy - 5, 5, 5);
+                
+                // Can barı
+                ctx.fillStyle = '#333';
+                ctx.fillRect(sx - 15, sy - 25, 30, 4);
+                ctx.fillStyle = '#e94560';
+                ctx.fillRect(sx - 15, sy - 25, 30 * (z.health/z.maxHealth), 4);
             });
             
             // Oyuncu
-            ctx.font = '30px Arial';
-            ctx.fillText('👨', game.player.x, game.player.y);
+            const px = game.player.x - game.camera.x;
+            const py = game.player.y - game.camera.y;
             
-            // Nişangah
-            ctx.strokeStyle = '#0f0';
-            ctx.beginPath();
-            ctx.arc(game.mouse.x, game.mouse.y, 15, 0, Math.PI*2);
-            ctx.stroke();
+            // Gölge
+            drawEllipse(game.player.x, game.player.y + 18, 18, 6, 'rgba(0,0,0,0.4)');
+            // Vücut
+            drawCircle(game.player.x, game.player.y, 18, '#3498db');
+            // Kafa
+            drawCircle(game.player.x, game.player.y - 8, 12, '#f1c40f');
+            // Gözler
+            ctx.fillStyle = '#000';
+            ctx.fillRect(px - 6, py - 10, 4, 4);
+            ctx.fillRect(px + 2, py - 10, 4, 4);
+            
+            // Partiküller
+            game.particles = game.particles.filter(p => {
+                p.y += p.vy;
+                p.life--;
+                ctx.font = '20px Arial';
+                ctx.fillText(p.emoji, p.x - game.camera.x, p.y - game.camera.y);
+                return p.life > 0;
+            });
+            
+            // Gece efekti
+            if(!game.day) {
+                const grad = ctx.createRadialGradient(px, py, 100, px, py, 400);
+                grad.addColorStop(0, 'rgba(0,0,0,0)');
+                grad.addColorStop(1, 'rgba(0,0,0,0.7)');
+                ctx.fillStyle = grad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+            }
+            
+            // İnşa izni göstergesi
+            if(game.day) {
+                const mx = Math.floor(game.mouse.worldX / TILE) * TILE;
+                const my = Math.floor(game.mouse.worldY / TILE) * TILE;
+                ctx.strokeStyle = game.selectedBuild === 'wall' ? '#8b4513' : 
+                                 game.selectedBuild === 'tower' ? '#e94560' : '#ffd700';
+                ctx.lineWidth = 3;
+                ctx.strokeRect(mx - game.camera.x, my - game.camera.y, TILE, TILE);
+            }
             
             requestAnimationFrame(gameLoop);
+        }
+        
+        function drawEllipse(x, y, rx, ry, color) {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.ellipse(x - game.camera.x, y - game.camera.y, rx, ry, 0, 0, Math.PI*2);
+            ctx.fill();
         }
     </script>
 </body>
