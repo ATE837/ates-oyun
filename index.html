@@ -2,35 +2,308 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Ateş Oyun</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ateş - Hayatta Kal</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
             background: #0a0a0a;
             color: #0f0;
-            font-family: monospace;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+        
+        #menu {
             text-align: center;
-            padding: 50px;
+            padding-top: 100px;
         }
+        
         h1 {
-            text-shadow: 0 0 10px #0f0;
-            font-size: 3em;
+            font-size: 4em;
+            text-shadow: 0 0 20px #0f0;
+            margin-bottom: 20px;
         }
-        button {
+        
+        .btn {
+            display: inline-block;
+            padding: 20px 50px;
+            margin: 15px;
+            background: transparent;
+            color: #0f0;
+            border: 3px solid #0f0;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
             background: #0f0;
             color: #000;
-            border: none;
-            padding: 20px 40px;
-            font-size: 20px;
-            margin: 10px;
+            box-shadow: 0 0 30px #0f0;
+        }
+        
+        #game {
+            display: none;
+            position: relative;
+        }
+        
+        #gameCanvas {
+            display: block;
+            background: #1a1a2e;
+        }
+        
+        #ui {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            font-size: 18px;
+            text-shadow: 2px 2px 4px #000;
+        }
+        
+        .health-bar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 30px;
+            background: #333;
+            border: 2px solid #0f0;
+        }
+        
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0f0, #0a0);
+            width: 100%;
+            transition: width 0.3s;
+        }
+        
+        #buildMenu {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .build-btn {
+            width: 60px;
+            height: 60px;
+            background: #222;
+            border: 2px solid #0f0;
+            color: #0f0;
+            font-size: 1.5em;
             cursor: pointer;
+        }
+        
+        .build-btn.selected {
+            background: #0f0;
+            color: #000;
+        }
+        
+        #dayNight {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <h1>🔥 ATEŞ 🔥</h1>
-    <p>Hayatta Kal - İnşa Et - Savun</p>
-    <br>
-    <button onclick="alert('Oyun başlıyor!')">OYNA</button>
-    <button onclick="alert('Kod: 1234')">KATIL</button>
+    <div id="menu">
+        <h1>🔥 ATEŞ 🔥</h1>
+        <p style="font-size: 1.2em; margin-bottom: 30px;">Gündüz İnşa Et | Gece Savun</p>
+        <button class="btn" onclick="startGame()">🎮 OYNA</button>
+        <br>
+        <p style="margin-top: 20px; opacity: 0.7;">WASD: Hareket | Mouse: İnşa | Boşluk: Saldır</p>
+    </div>
+    
+    <div id="game">
+        <canvas id="gameCanvas"></canvas>
+        <div id="ui">
+            <div>🪵 <span id="wood">50</span></div>
+            <div>🪨 <span id="stone">20</span></div>
+            <div>🔩 <span id="metal">10</span></div>
+        </div>
+        <div id="dayNight">☀️ 02:00</div>
+        <div class="health-bar"><div class="health-fill" id="health"></div></div>
+        <div id="buildMenu">
+            <button class="build-btn selected" onclick="selectBuild('wall')">🧱</button>
+            <button class="build-btn" onclick="selectBuild('tower')">🏹</button>
+            <button class="build-btn" onclick="selectBuild('trap')">🕸️</button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        let game = {
+            player: { x: canvas.width/2, y: canvas.height/2, health: 100, speed: 4 },
+            resources: { wood: 50, stone: 20, metal: 10 },
+            buildings: [],
+            zombies: [],
+            day: true,
+            time: 120,
+            selectedBuild: 'wall',
+            keys: {},
+            mouse: { x: 0, y: 0 }
+        };
+        
+        function startGame() {
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
+            init();
+        }
+        
+        function init() {
+            // Kontroller
+            document.addEventListener('keydown', e => game.keys[e.key.toLowerCase()] = true);
+            document.addEventListener('keyup', e => game.keys[e.key.toLowerCase()] = false);
+            document.addEventListener('mousemove', e => {
+                game.mouse.x = e.clientX;
+                game.mouse.y = e.clientY;
+            });
+            document.addEventListener('click', build);
+            
+            // Zaman döngüsü
+            setInterval(() => {
+                game.time--;
+                if(game.time <= 0) {
+                    game.day = !game.day;
+                    game.time = 120;
+                    if(game.day) {
+                        game.resources.wood += 30;
+                        game.resources.stone += 15;
+                        game.resources.metal += 5;
+                    }
+                }
+                updateUI();
+            }, 1000);
+            
+            // Zombi spawn
+            setInterval(() => {
+                if(!game.day && game.zombies.length < 20) {
+                    spawnZombie();
+                }
+            }, 2000);
+            
+            gameLoop();
+        }
+        
+        function spawnZombie() {
+            const angle = Math.random() * Math.PI * 2;
+            const dist = 600;
+            game.zombies.push({
+                x: game.player.x + Math.cos(angle) * dist,
+                y: game.player.y + Math.sin(angle) * dist,
+                health: 30,
+                speed: 1 + Math.random()
+            });
+        }
+        
+        function build() {
+            if(!game.day) return;
+            
+            const costs = { wall: {w:10,s:0,m:0}, tower: {w:30,s:10,m:0}, trap: {w:5,s:0,m:5} };
+            const c = costs[game.selectedBuild];
+            
+            if(game.resources.wood >= c.w && game.resources.stone >= c.s && game.resources.metal >= c.m) {
+                game.resources.wood -= c.w;
+                game.resources.stone -= c.s;
+                game.resources.metal -= c.m;
+                game.buildings.push({
+                    type: game.selectedBuild,
+                    x: game.mouse.x,
+                    y: game.mouse.y,
+                    health: 100
+                });
+            }
+        }
+        
+        function selectBuild(type) {
+            game.selectedBuild = type;
+            document.querySelectorAll('.build-btn').forEach(b => b.classList.remove('selected'));
+            event.target.classList.add('selected');
+        }
+        
+        function updateUI() {
+            document.getElementById('wood').textContent = game.resources.wood;
+            document.getElementById('stone').textContent = game.resources.stone;
+            document.getElementById('metal').textContent = game.resources.metal;
+            document.getElementById('health').style.width = game.player.health + '%';
+            
+            const m = Math.floor(game.time/60);
+            const s = game.time%60;
+            document.getElementById('dayNight').textContent = 
+                (game.day ? '☀️' : '🌙') + ` ${m}:${s.toString().padStart(2,'0')}`;
+        }
+        
+        function gameLoop() {
+            // Arka plan
+            ctx.fillStyle = game.day ? '#87CEEB' : '#1a1a2e';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Grid
+            ctx.strokeStyle = game.day ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.05)';
+            for(let x=0; x<canvas.width; x+=50) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke(); }
+            for(let y=0; y<canvas.height; y+=50) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(canvas.width,y); ctx.stroke(); }
+            
+            // Oyuncu hareketi
+            if(game.keys['w']) game.player.y -= game.player.speed;
+            if(game.keys['s']) game.player.y += game.player.speed;
+            if(game.keys['a']) game.player.x -= game.player.speed;
+            if(game.keys['d']) game.player.x += game.player.speed;
+            
+            // Binalar
+            game.buildings.forEach(b => {
+                ctx.font = '30px Arial';
+                ctx.textAlign = 'center';
+                let emoji = b.type === 'wall' ? '🧱' : b.type === 'tower' ? '🏹' : '🕸️';
+                ctx.fillText(emoji, b.x, b.y);
+            });
+            
+            // Zombiler
+            game.zombies.forEach((z, i) => {
+                const dx = game.player.x - z.x;
+                const dy = game.player.y - z.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                if(dist > 0) {
+                    z.x += (dx/dist) * z.speed;
+                    z.y += (dy/dist) * z.speed;
+                }
+                
+                if(dist < 30) {
+                    game.player.health -= 0.5;
+                    if(game.player.health <= 0) {
+                        alert('Öldün! Yeniden başlıyor...');
+                        location.reload();
+                    }
+                }
+                
+                ctx.font = '25px Arial';
+                ctx.fillText('🧟', z.x, z.y);
+            });
+            
+            // Oyuncu
+            ctx.font = '30px Arial';
+            ctx.fillText('👨', game.player.x, game.player.y);
+            
+            // Nişangah
+            ctx.strokeStyle = '#0f0';
+            ctx.beginPath();
+            ctx.arc(game.mouse.x, game.mouse.y, 15, 0, Math.PI*2);
+            ctx.stroke();
+            
+            requestAnimationFrame(gameLoop);
+        }
+    </script>
 </body>
 </html>
